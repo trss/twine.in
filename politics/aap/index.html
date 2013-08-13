@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Aam Aadmi Party's Donations - A Visualization - twine.in</title>
+<script src="d3.v3.min.js" charset="utf-8"></script>
+<script src="crossfilter.v1.min.js"></script>
+<!--script src="jquery-1.10.2.min.js"></script-->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="stats-compiled.js"></script>
+<link href="bootstrap.min.css" rel="stylesheet">
+<link rel="shortcut icon" href="twine.png" />
+<style>
+body {
+    background-image: url(noise.png);
+    font-size: 11px;
+}
+svg {
+    font: 10px tahoma;
+}
+path {
+    fill: none;
+    stroke: gold;
+    stroke-width: 2;
+}
+path.timeline {
+    fill: gold;
+}
+.brush {
+    stroke: midnightblue;
+    fill-opacity: .4;
+    shape-rendering: crispEdges;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #980;
+    shape-rendering: crispEdges;
+}
+.overlay {
+    fill: rgba(255, 255, 255, 0.9);
+}
+
+select {
+    font-size: 12px;
+}
+div#top_states_list, div#top_districts_list {
+    display: none;
+}
+div.loading {
+    margin-top: 40%;
+    font-size: 3em;
+}
+div#chart_filters {
+    display: none;
+}
+div.header {
+    font-size: 2.5em;
+    margin-top: 30px;
+}
+.capitalized {
+    text-transform:capitalize;
+}
+</style>
+</head>
+<body>
+<script>
+var print_list = function(l) {
+    for ( var i = 0; i < l.length; i++ ) {
+        console.log(l[i]);
+    }
+};
+</script>
+<div class="row">
+    <div class="header span6 offset3">AAP's Donations - A Visualization</div>
+</div>
+<div class="row">
+    <div id="chart_canvas" class="span10">
+        <div class="row loading offset4">Loading data ...</div>
+        <div class="row">-</div> <!-- Yuckkky -->
+        <div class="row offset3">While that's happening why don't you go 
+        <a class="btn btn-large btn-success" href="https://donate.aamaadmiparty.org" target="_new">Donate to AAP</a>
+        </div>
+    </div>
+
+    <div id="chart_filters" class="span2">
+        <div class="row">
+            <a class="btn btn-large btn-success span2" href="https://donate.aamaadmiparty.org" target="_new">Donate to AAP</a>
+        </div>
+        <div class="row">&nbsp;</div> <!-- Yuckkky -->
+        <div class="row">
+            <div class="span3">
+                Country: <select id="country"/></select>
+                <br />
+                <div id="top_states_list">
+                    Top 5 States:
+                    <table id="top_states" class="table table-condensed table-striped table-bordered text-right">
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span3">
+                State: <select id="state"/></select>
+                <br />
+                <div id="top_districts_list">
+                    Top 5 Districts:
+                    <table id="top_districts" class="table table-condensed table-striped table-bordered capitalized">
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div> <!-- chart_filters -->
+</div>
+<div class="row span6 offset3">&copy; vijaya chandra vupputuri - <a href="http://twine.in">twine.in</a></div>
+
+</body>
+</html>
