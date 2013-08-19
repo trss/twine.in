@@ -1,34 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Aam Aadmi Party's Donations - A Visualization - twine.in</title>
+<title>Donations to Political Parties - A Visualization - twine.in</title>
 <script src="d3.v3.min.js" charset="utf-8"></script>
 <script src="crossfilter.v1.min.js"></script>
 <!--script src="jquery-1.10.2.min.js"></script-->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script src="stats-compiled.js"></script>
+<script src="stats.js"></script>
 <link href="bootstrap.min.css" rel="stylesheet">
 <link rel="shortcut icon" href="twine.png" />
 <style>
 body {
     background-image: url(noise.png);
-    font-size: 11px;
 }
 svg {
     font: 10px tahoma;
 }
 path {
-    fill: none;
-    stroke: gold;
     stroke-width: 2;
 }
+path.areachart {
+    fill: orange;
+    fill-opacity: 0.2;
+    stroke: orange;
+}
 path.timeline {
-    fill: gold;
+    fill-opacity: 1;
 }
 .brush {
-    stroke: midnightblue;
-    fill-opacity: .4;
+    stroke: lightslategray;
+    fill-opacity: .3;
     shape-rendering: crispEdges;
+}
+.resizer {
+    fill: gold;
+    fill-opacity: 0.7;
 }
 
 .axis path,
@@ -39,12 +45,30 @@ path.timeline {
 }
 .overlay {
     fill: rgba(255, 255, 255, 0.9);
+    fill: white;
+    fill-opacity: 0.01;
+    cursor: pointer;
+}
+.chart_label {
+    font-size: 14px;
+    fill: lightslategray;
+    font-family: 'Courier New';
+    text-transform: capitalize;
+}
+.pie_chart {
+    fill-opacity: 1;
+}
+.pie_label {
+    font-size: 16px;
+    fill: black;
+    font-family: 'Courier New';
 }
 
 select {
+    background-image: url(noise.png);
     font-size: 12px;
 }
-div#top_states_list, div#top_districts_list {
+div#top_list_1, div#top_list_2 {
     display: none;
 }
 div.loading {
@@ -53,13 +77,84 @@ div.loading {
 }
 div#chart_filters {
     display: none;
+    font-size: 11px;
 }
 div.header {
-    font-size: 2.5em;
-    margin-top: 30px;
+    font-size: 2.1em;
+    margin-top: 25px;
+    margin-bottom: 25px;
 }
 .capitalized {
     text-transform:capitalize;
+}
+.centered {
+    text-align: center;
+}
+.bullet-caption {
+    text-align: left;
+    font-size: 24px;
+    font-weight: bold;
+}
+.bullet-value {
+    text-align: right;
+    font-style: italic;
+    font-size: 50px;
+    font-weight: normal;
+}
+div.box {
+    background-color: white;
+    margin-bottom: 20px;
+    border-radius: 3px 3px 3px 3px;
+    border-style: solid;
+    border-color: lightgray;
+    border-width: 1px;
+
+    -webkit-box-shadow: 0px 3px 5px rgba(50, 50, 50, 0.7);
+    -moz-box-shadow:    0px 3px 5px rgba(50, 50, 50, 0.7);
+    box-shadow:         0px 3px 5px rgba(50, 50, 50, 0.7);
+
+    text-shadow: 0px 1px 2px rgba(150, 150, 150, 0.6);
+}
+div.small {
+}
+div.small-text {
+    font-size: 18px;
+    line-height: 42px;
+    padding: 64px;
+    padding-top: 32px;
+    padding-bottom: 32px;
+    text-align: left;
+}
+div.large-text {
+    font-weight: lighter;
+    font-size: 50px;
+    line-height: 86px;
+
+    padding: 64px;
+    padding-top: 32px;
+    padding-bottom: 32px;
+
+    text-shadow: 0px 1px 2px rgba(150, 150, 150, 0.8);
+}
+.italic {
+    font-style: italic;
+}
+.inline {
+    display: inline;
+}
+div.row {
+    /*margin: 10px;*/
+}
+div.chart_container {
+    margin-left: 10px;
+    margin-right: 10px;
+    padding-top: 20px;
+}
+tr.light {
+    color: #fff;
+}
+tr.dark {
+    color: #000;
 }
 </style>
 </head>
@@ -72,9 +167,11 @@ var print_list = function(l) {
 };
 </script>
 <div class="row">
-    <div class="header span6 offset3">AAP's Donations - A Visualization</div>
+    <div class="header span8 offset2">Visualization of donations to Political Parties</div>
 </div>
-<div class="row">
+<div class="box chart_container">
+  <div class="row">
+    <div class="offset1"><p>Let's take a look at the donations to Aam Aadmi Party this year <img src="logo-aap.gif"/></p></div>
     <div id="chart_canvas" class="span10">
         <div class="row loading offset4">Loading data ...</div>
         <div class="row">-</div> <!-- Yuckkky -->
@@ -84,34 +181,90 @@ var print_list = function(l) {
     </div>
 
     <div id="chart_filters" class="span2">
+        <!--
         <div class="row">
             <a class="btn btn-large btn-success span2" href="https://donate.aamaadmiparty.org" target="_new">Donate to AAP</a>
         </div>
-        <div class="row">&nbsp;</div> <!-- Yuckkky -->
+        <div class="row">&nbsp;</div>
+        -->
         <div class="row">
             <div class="span3">
-                Country: <select id="country"/></select>
+                Country: <select id="country"></select>
                 <br />
-                <div id="top_states_list">
-                    Top 5 States:
-                    <table id="top_states" class="table table-condensed table-striped table-bordered text-right">
+                <div id="top_list_1">
+                    Top 5 <span id="top_list_label_1">States</span>:
+                    <table id="top_regions_1" class="table table-condensed table-striped table-bordered text-right">
                     </table>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="span3">
-                State: <select id="state"/></select>
+                State: <select id="state"></select>
                 <br />
-                <div id="top_districts_list">
-                    Top 5 Districts:
-                    <table id="top_districts" class="table table-condensed table-striped table-bordered capitalized">
+                <div id="top_list_2">
+                    Top 5 <span id="top_list_label_2">Districts</span>:
+                    <table id="top_regions_2" class="table table-condensed table-striped table-bordered capitalized">
                     </table>
                 </div>
             </div>
         </div>
     </div> <!-- chart_filters -->
+  </div>
 </div>
+
+<div class="centered">
+
+    <div class="row">
+    <div class="box small-text span8 offset2">
+        <p>This entire visualization was done using the information about donations available on the <a href="http://aamaadmiparty.org">Aam Aadmi Party</a> website. I didn't even have to send an email to anyone from AAP to send me the details.
+        </p>
+    </div>
+    </div>
+
+
+    <div class="row">
+    <div class="box large-text span8 offset2">
+        <div class="row">Congress <img src="logo-congi.png"/></div>
+        <div class="row span8 bullet-caption"><div class="inline">Donations received this year:</div></div>
+        <div class="row span8 bullet-value"><span>Data Not Available!</span></div>
+        <div class="row span8 bullet-caption">Details of all donors for previous years:</div>
+        <div class="row span8 bullet-value"><span>Not Available!</span></div>
+    </div>
+    </div>
+
+    <div class="row">
+    <div class="box large-text span8 offset2">
+        <div class="row">BJP <img src="logo-bjp.png"/></div>
+        <div class="row span8 bullet-caption"><div class="inline">Donations received this year:</div></div>
+        <div class="row span8 bullet-value"><span>Data Not Available!</span></div>
+        <div class="row span8 bullet-caption">Details of all donors for previous years:</div>
+        <div class="row span8 bullet-value"><span>Not Available!</span></div>
+    </div>
+    </div>
+
+    <div class="row">
+    <div class="box large-text span8 offset2">
+        <div class="row">BSP <img src="logo-bsp.png"/></div>
+        <div class="row span8 bullet-caption"><div class="inline">Donations received this year:</div></div>
+        <div class="row span8 bullet-value"><span>Data Not Available!</span></div>
+        <div class="row span8 bullet-caption">Details of all donors for previous years:</div>
+        <div class="row span8 bullet-value"><span>Not Available!</span></div>
+        <!--div class="row"><h3 class="inline">Donations received this year:</h3> <span class="italic">No Clue!</span></div-->
+        <div class="row span8"><h3>No. of donations more than Rs. 20,000 of the Rs. 308 crores received between 2007 and 2010 :</h3></div>
+        <div class="row">0 (Yes, ZERO!)</div>
+    </div>
+    </div>
+
+    <div class="row">
+    <div class="box small-text span8 offset2">
+        <div><em>So what? What's the big deal if you can't visualize the donations of these parties?</em></div>
+        <div>The point is not about fancy graphs and visualizations, it's about transparency ...............</div>
+    </div>
+    </div>
+</div>
+
+
 <div class="row span6 offset3">&copy; vijaya chandra vupputuri - <a href="http://twine.in">twine.in</a></div>
 <script type="text/javascript">
 
@@ -126,7 +279,8 @@ var print_list = function(l) {
   })();
 
 </script>
-<!-- AddThis Button BEGIN -->
+<!-- Sharing Stuff -->
+<!--
 <div class="addthis_toolbox addthis_default_style addthis_16x16_style">
 <a class="addthis_button_facebook"></a>
 <a class="addthis_button_twitter"></a>
@@ -136,6 +290,7 @@ var print_list = function(l) {
 </div>
 <script type="text/javascript">var addthis_config = {"data_track_addressbar":true};</script>
 <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-520a79b325641768"></script>
-<!-- AddThis Button END -->
+-->
+<!-- End of Sharing Stuff -->
 </body>
 </html>
