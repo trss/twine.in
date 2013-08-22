@@ -61,7 +61,7 @@ div#top_list_1, div#top_list_2 {
 }
 div.loading {
     margin-top: 40%;
-    margin-bottom: 15%;
+    margin-bottom: 35%;
     font-size: 3em;
 }
 div#chart_filters {
@@ -169,6 +169,10 @@ div.question {
     margin-top: 20px;
     font-weight: bold;
     font-style: italic;
+}
+div.footer {
+    padding-top: 15px;
+    padding-bottom: 10px;
 }
 table.misc_stats tr th {
     text-align: center;
