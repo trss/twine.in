@@ -6,157 +6,11 @@
 <script src="crossfilter.v1.min.js"></script>
 <!--script src="jquery-1.10.2.min.js"></script-->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script src="stats.js"></script>
+<script src="stats-compiled.js"></script>
 <link href="bootstrap.min.css" rel="stylesheet">
+<link href="stats.css" rel="stylesheet">
 <link rel="shortcut icon" href="twine.png" />
-<style>
-body {
-    background-image: url(noise.png);
-}
-svg {
-    font: 10px tahoma;
-}
-path {
-    stroke-width: 2;
-}
-path.areachart {
-    fill: orange;
-    fill-opacity: 0.2;
-    stroke: orange;
-}
-path.timeline {
-    fill-opacity: 1;
-}
-.brush {
-    stroke: lightslategray;
-    fill-opacity: .3;
-    shape-rendering: crispEdges;
-}
-.resizer {
-    fill: gold;
-    fill-opacity: 0.7;
-}
-
-.axis path,
-.axis line {
-    fill: none;
-    stroke: #980;
-    shape-rendering: crispEdges;
-}
-.overlay {
-    fill: rgba(255, 255, 255, 0.9);
-    fill: white;
-    fill-opacity: 0.01;
-    cursor: pointer;
-}
-.chart_label {
-    font-size: 14px;
-    fill: lightslategray;
-    font-family: 'Courier New';
-    text-transform: capitalize;
-}
-.pie_chart {
-    fill-opacity: 1;
-}
-.pie_label {
-    font-size: 16px;
-    fill: black;
-    font-family: 'Courier New';
-}
-
-select {
-    background-image: url(noise.png);
-    font-size: 12px;
-}
-div#top_list_1, div#top_list_2 {
-    display: none;
-}
-div.loading {
-    margin-top: 40%;
-    font-size: 3em;
-}
-div#chart_filters {
-    display: none;
-    font-size: 11px;
-}
-div.header {
-    font-size: 2.1em;
-    margin-top: 25px;
-    margin-bottom: 25px;
-}
-.capitalized {
-    text-transform:capitalize;
-}
-.centered {
-    text-align: center;
-}
-.bullet-caption {
-    text-align: left;
-    font-size: 24px;
-    font-weight: bold;
-}
-.bullet-value {
-    text-align: right;
-    font-style: italic;
-    font-size: 50px;
-    font-weight: normal;
-}
-div.box {
-    background-color: white;
-    margin-bottom: 20px;
-    border-radius: 3px 3px 3px 3px;
-    border-style: solid;
-    border-color: lightgray;
-    border-width: 1px;
-
-    -webkit-box-shadow: 0px 3px 5px rgba(50, 50, 50, 0.7);
-    -moz-box-shadow:    0px 3px 5px rgba(50, 50, 50, 0.7);
-    box-shadow:         0px 3px 5px rgba(50, 50, 50, 0.7);
-
-    text-shadow: 0px 1px 2px rgba(150, 150, 150, 0.6);
-}
-div.small {
-}
-div.small-text {
-    font-size: 18px;
-    line-height: 42px;
-    padding: 64px;
-    padding-top: 32px;
-    padding-bottom: 32px;
-    text-align: left;
-}
-div.large-text {
-    font-weight: lighter;
-    font-size: 50px;
-    line-height: 86px;
-
-    padding: 64px;
-    padding-top: 32px;
-    padding-bottom: 32px;
-
-    text-shadow: 0px 1px 2px rgba(150, 150, 150, 0.8);
-}
-.italic {
-    font-style: italic;
-}
-.inline {
-    display: inline;
-}
-div.row {
-    /*margin: 10px;*/
-}
-div.chart_container {
-    margin-left: 10px;
-    margin-right: 10px;
-    padding-top: 20px;
-}
-tr.light {
-    color: #fff;
-}
-tr.dark {
-    color: #000;
-}
-</style>
+<link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
 </head>
 <body>
 <script>
@@ -166,27 +20,26 @@ var print_list = function(l) {
     }
 };
 </script>
+<div class="container">
 <div class="row">
     <div class="header span8 offset2">Visualization of donations to Political Parties</div>
 </div>
 <div class="box chart_container">
   <div class="row">
-    <div class="offset1"><p>Let's take a look at the donations to Aam Aadmi Party this year <img src="logo-aap.gif"/></p></div>
+    <div class="offset1"><p class="hidden">Political parties run the nation and our lives in turn. So why not have a look at the money that runs the political parties?</p>
+    <p>Let's take a look at the donations to Aam Aadmi Party this year <img src="logo-aap.gif"/></p>
+    </div>
     <div id="chart_canvas" class="span10">
+        <div id="chart_canvas_loading">
         <div class="row loading offset4">Loading data ...</div>
         <div class="row">-</div> <!-- Yuckkky -->
-        <div class="row offset3">While that's happening why don't you go 
-        <a class="btn btn-large btn-success" href="https://donate.aamaadmiparty.org" target="_new">Donate to AAP</a>
+        <div class="row offset3 hidden">While that's happening why don't you go 
+        <a class="btn btn-large btn-success hidden donate" href="https://donate.aamaadmiparty.org" target="_blank">Donate to AAP</a>
+        </div>
         </div>
     </div>
 
     <div id="chart_filters" class="span2">
-        <!--
-        <div class="row">
-            <a class="btn btn-large btn-success span2" href="https://donate.aamaadmiparty.org" target="_new">Donate to AAP</a>
-        </div>
-        <div class="row">&nbsp;</div>
-        -->
         <div class="row">
             <div class="span3">
                 Country: <select id="country"></select>
@@ -209,27 +62,39 @@ var print_list = function(l) {
                 </div>
             </div>
         </div>
+        <div class="row hidden" id="donate_to_aap">
+            <a class="btn btn-large btn-success span2 donate" href="https://donate.aamaadmiparty.org" target="_blank">Donate to AAP</a>
+        </div>
     </div> <!-- chart_filters -->
   </div>
+  <div class="row offset1 hidden" id="examples">
+    Some sample views: <span class="label label-info" id="eg_july">Donations from July</span> <span class="label label-warning" id="eg_pie_world">Country-wise contributions</span> <span class="label label-success" id="eg_max_state">State with highest donations</span>
+    <br />
+  </div>
+    <div class="row offset1">
+        <div><span class="whisper">* Data last updated @ 12:45 22nd Aug 2013 IST</span></div>
+    </div>
 </div>
 
-<div class="centered">
+<div class="centered hidden" id="rant">
 
     <div class="row">
     <div class="box small-text span8 offset2">
-        <p>This entire visualization was done using the information about donations available on the <a href="http://aamaadmiparty.org">Aam Aadmi Party</a> website. I didn't even have to send an email to anyone from AAP to send me the details.
+        <p>This entire visualization was done using the information about donations available on the <a href="http://aamaadmiparty.org" target="_blank">Aam Aadmi Party</a> website. You can browse through the donors' list <a href="http://aamaadmiparty.org/donation-list" target="_blank">here</a>. It didn't even require sending an email to anyone from AAP asking for any additional details.
+        </p>
+        <p>
+        Now let's take a look at our other major political parties ...
         </p>
     </div>
     </div>
 
-
     <div class="row">
     <div class="box large-text span8 offset2">
-        <div class="row">Congress <img src="logo-congi.png"/></div>
+        <div class="row">Congress (INC) <img src="logo-congi.png"/></div>
         <div class="row span8 bullet-caption"><div class="inline">Donations received this year:</div></div>
         <div class="row span8 bullet-value"><span>Data Not Available!</span></div>
         <div class="row span8 bullet-caption">Details of all donors for previous years:</div>
-        <div class="row span8 bullet-value"><span>Not Available!</span></div>
+        <div class="row span8 bullet-value"><span>Not Available!<sup>*</sup></span></div>
     </div>
     </div>
 
@@ -239,7 +104,7 @@ var print_list = function(l) {
         <div class="row span8 bullet-caption"><div class="inline">Donations received this year:</div></div>
         <div class="row span8 bullet-value"><span>Data Not Available!</span></div>
         <div class="row span8 bullet-caption">Details of all donors for previous years:</div>
-        <div class="row span8 bullet-value"><span>Not Available!</span></div>
+        <div class="row span8 bullet-value"><span>Not Available!<sup>*</sup></span></div>
     </div>
     </div>
 
@@ -250,24 +115,109 @@ var print_list = function(l) {
         <div class="row span8 bullet-value"><span>Data Not Available!</span></div>
         <div class="row span8 bullet-caption">Details of all donors for previous years:</div>
         <div class="row span8 bullet-value"><span>Not Available!</span></div>
-        <!--div class="row"><h3 class="inline">Donations received this year:</h3> <span class="italic">No Clue!</span></div-->
-        <div class="row span8"><h3>No. of donations more than Rs. 20,000 of the Rs. 308 crores received between 2007 and 2010 :</h3></div>
-        <div class="row">0 (Yes, ZERO!)</div>
+        <!--div class="row span8"><h3>No. of donations more than Rs. 20,000 of the Rs. 308 crores received between 2007 and 2010 :</h3></div>
+        <div class="row">0 (Yes, ZERO!)</div-->
+    </div>
+    </div>
+
+    <div class="row">
+    <div class="box large-text span8 offset2">
+        <div class="row">NCP <img src="logo-ncp.jpg"/></div>
+        <div class="row span8 bullet-caption"><div class="inline">Donations received this year:</div></div>
+        <div class="row span8 bullet-value"><span>Data Not Available!</span></div>
+        <div class="row span8 bullet-caption">Details of all donors for previous years:</div>
+        <div class="row span8 bullet-value"><span>Not Available!<sup>*</sup></span></div>
+    </div>
+    </div>
+
+    <div class="row">
+    <div class="box large-text span8 offset2">
+        <div class="row">CPM <img src="logo-cpm.png"/></div>
+        <div class="row span8 bullet-caption"><div class="inline">Donations received this year:</div></div>
+        <div class="row span8 bullet-value"><span>Data Not Available!</span></div>
+        <div class="row span8 bullet-caption">Details of all donors for previous years:</div>
+        <div class="row span8 bullet-value"><span>Not Available!<sup>*</sup></span></div>
     </div>
     </div>
 
     <div class="row">
     <div class="box small-text span8 offset2">
-        <div><em>So what? What's the big deal if you can't visualize the donations of these parties?</em></div>
-        <div>The point is not about fancy graphs and visualizations, it's about transparency ...............</div>
+        <div>
+        Only if you can spare a lot of time and patience to approach the political parties and the Election Commission(and the IT department) can you obtain any of these details. <a href="http://adrindia.org" target="_blank">ADR</a> tried doing that to obtain and analyse the data from 2004 to 2011. All parties(except CPM) responded saying that they don't come under the RTI act (BJP apparently didn't even bother to respond). Political parties are required to reveal information about the donors only for donations exceeding Rs 20,000. So, our parties abuse this loophole and keep those amounts to the minimum.
+        <table class="table table-condensed table-bordered table-striped misc_stats">
+            <thead>
+            <tr><th>Party</th><th>Total Income<br/>(Crores of Rs)</th><th>Donations &gt; Rs 20,000<br/>(Crores of Rs)</th><th>% of donations &gt; Rs 20,000</th></tr>
+            </thead>
+            <tr><td>INC</td><td>2008.71</td><td>177.96</td><td>8.86%</td></tr>
+            <tr><td>BJP</td><td>994.76</td><td>153.64</td><td>15.44%</td></tr>
+            <tr><td>BSP</td><td>438.39</td><td>0</td><td>0%</td></tr>
+            <tr><td>CPI</td><td>8.43</td><td>3.20</td><td>37.98%</td></tr>
+            <tr><td>CPM</td><td>417.26</td><td>3.32</td><td>0.80%</td></tr>
+            <tr><td>NCP</td><td>160.82</td><td>9.79</td><td>6.09%</td></tr>
+        </table>
+        You can at the maxium get detailed information of only less than 9% of the Rs 4000+ crore income of these parties. <br/><br/>
+        Some parties like the BSP have the shameless audacity to claim that they have 0 donations (Yes .. <strong><em>ZERO DONATIONS</em></strong>) exceeding Rs. 20,000 out of their total income of Rs. 438 crores - CPM at least says 0.8% of its income is from such donations.
+        </div>
+    </div>
+    </div>
+
+    <div class="row">
+    <div class="box small-text span8 offset2">
+    The Central Information Commission(CIC) on 3rd June 2013 gave the judgement that political parties too come under the purview of RTI act and ordered INC, BJP, BSP, CPI, CPI-M and NCP to appoint information commissioners within 50 days. What did our parties do? Instead of complying with these orders or may be even challenge the order in the high court, they <a href="http://www.thehindu.com/news/national/parties-gang-up-on-cic-order/article4782169.ece?ref=twine.in" target="_blank">ganged up</a> to amend the RTI act itself making an exception for the political parties. <br /><br />
+    And they are very serious about this. Within 2 months (at a pace that we never see them handling any problems facing the country) a bill is put forward in the parliament for amending the RTI act. For a comparison, the Jan Lokpal bill was introduced in the Parliament by Santh Bhushan in 1968 and it surely is going to hit a half century sitting in the parliament.<br/>
+    <img src="45-years-no-lokpal.png" alt="45 years and still no Lokpal but amenments to RTI within 2 months to exclude Political Parties" />
+    <!--
+    <div class="centered">So much for democracy being - <em>for the people, of the people and by the people</em></div>
+    -->
+    <div class="centered" style="font-size:0.8em;"><em>And I will strike down upon thee with great vengeance and furious anger those who attempt to poison and destroy my brothers</em></div>
+    </div>
+    </div>
+
+    <div class="row">
+    <div class="box small-text span8 offset2">
+    <div class="question">So what? What's the big deal if you can't visualize the donations of these parties? Why this rant?</div>
+    <div>The point is not about fancy graphs and visualizations, it's about transparency. You are giving power to the political parties to rule you and decide your future. It's your right to at least know where they are getting their funds from.<br/>
+    And it's not limited to this. The Supreme court on July 10th gave a ruling that an MLA or MP convicted of any criminal charges immediately gets disqualified and barring people in custody from contesting elections. 'They' don't like this either. They <a href="http://www.thehindu.com/news/national/consensus-on-nullifying-apex-court-order-against-convicted-lawmakers/article5019176.ece?ref=twine.in" target="_blank">gang up</a> again and are on the way to amend the Representation of the People Act again to over-rule the Supreme court judgement. This one has an even faster turn around time - just 1 month for action in the parliament!<br/>
+    </div>
+
+    <div class="question">You are using abstract, sentimental words like power, rights and responsibility? Why should share their financial details with the people?</div>
+    <div>We have the <em>right</em> to know the details because all the political parties are directly getting benefits worth thousands of crores of rupees directly from the government. That's our taxes going into the pockets of the parties. <br />
+    <ul>
+    <li>The land allotted to a few political parties in New Delhi alone is worth more than Rs. 2,600 crores</li>
+    <li>Tax exemptions given to the parties every year run into hundreds of crores of rupees</li>
+    <li>Bungalows, offices and houses provided to the parties cost a few more tens of crores every year</li>
+    </ul>
+    Check out this document from ADR for detailed numbers - <a href="http://adrindia.org/sites/default/files/A%20brief%20note%20on%20substantial%20funding%20given%20to%20the%20political%20parties..pdf" target="_blank">Amount of substantial funding received by political parties</a>.<br/>
+    The political parties are happily benefiting from tax payers' money; would the parties give all these benefits up and pay back for the benefits already received? <strong>NO!</strong> - So yes people do have the <em>right</em> to get information from the political parties.
+    </div>
+
+    <div class="question">So, what do you say we do?
+    </div>
+    <div>Come election day, at the least <strong><em>Go vote</em></strong> out corrupt politicians. If you can do more, go <a class="btn btn-small btn-success donate" href="https://donate.aamaadmiparty.org" target="_blank">donate</a> to parties like AAP <span class="hidden">(Nay, Lok Satta Party doesn't cut the deal!)</span> trying to bring in some transparency into the system.
+    </div>
+
+    </div>
+    </div>
+
+    <div class="row">
+    <div class="box small-text span8 offset2 references">
+        <h3>References</h3>
+        <ul>
+        <li><a href="http://adrindia.org/content/political-parties-come-under-rti-landmark-judgement-cic" target="_blank">Parties under RTI - The case and judgement (adrindia.org)</a></li>
+        <li><a href="http://adrindia.org/sites/default/files/A%20brief%20note%20on%20substantial%20funding%20given%20to%20the%20political%20parties..pdf" target="_blank">Amount of substantial funding received by political parties (adrindia.org)</a>
+        </li>
+        <li><a href="http://aamaadmiparty.org/donation-list" target="_blank">Aam Aadmi Party donation list</a>
+        </li>
+        </ul>
     </div>
     </div>
 </div>
 
 
-<div class="row span6 offset3">&copy; vijaya chandra vupputuri - <a href="http://twine.in">twine.in</a></div>
-<script type="text/javascript">
+<div class="row span6 offset3">&copy; vijaya chandra vupputuri - <a href="http://twine.in">twine.in</a>
+</div>
 
+<script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-35624062-1']);
   _gaq.push(['_trackPageview']);
@@ -277,10 +227,8 @@ var print_list = function(l) {
     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
-
 </script>
 <!-- Sharing Stuff -->
-<!--
 <div class="addthis_toolbox addthis_default_style addthis_16x16_style">
 <a class="addthis_button_facebook"></a>
 <a class="addthis_button_twitter"></a>
@@ -290,7 +238,8 @@ var print_list = function(l) {
 </div>
 <script type="text/javascript">var addthis_config = {"data_track_addressbar":true};</script>
 <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-520a79b325641768"></script>
--->
 <!-- End of Sharing Stuff -->
+
+</div> <!-- container -->
 </body>
 </html>
