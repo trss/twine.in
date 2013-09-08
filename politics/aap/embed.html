@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Donations to Political Parties - A Visualization - twine.in</title>
+<script src="d3.v3.min.js" charset="utf-8"></script>
+<script src="crossfilter.v1.min.js"></script>
+<!--script src="jquery-1.10.2.min.js"></script-->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="stats-compiled.js"></script>
+<link href="bootstrap.min.css" rel="stylesheet">
+<link href="stats.css" rel="stylesheet">
+<link href="embed.css" rel="stylesheet">
+<link rel="shortcut icon" href="twine.png" />
+<link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+</head>
+<body>
+<div class="container">
+<div class="box chart_container">
+  <div class="row">
+    <div id="chart_canvas" class="span7">
+        <div id="chart_canvas_loading">
+        <div class="row loading offset2">Loading data ...</div>
+        <div class="row">-</div> <!-- Yuckkky -->
+        <div class="row offset1">While that's happening why don't you go 
+        <a class="btn btn-large btn-success donate" href="https://donate.aamaadmiparty.org" target="_blank">Donate to AAP</a>
+        </div>
+        </div>
+    </div>
+
+    <div id="chart_filters" class="span2">
+        <div class="row">
+            <div class="span2">
+                Country: <select id="country" class="span2"></select>
+                <br />
+                <div id="top_list_1">
+                    <!--Top 5 <span id="top_list_label_1">States</span>:-->
+                    <table id="top_regions_1" class="table table-condensed table-striped table-bordered text-right">
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span2">
+                State: <select id="state" class="span2"></select>
+                <br />
+                <div id="top_list_2">
+                    <!-- Top 5 <span id="top_list_label_2">Districts</span>:-->
+                    <table id="top_regions_2" class="table table-condensed table-striped table-bordered capitalized">
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row hidden" id="donate_to_aap">
+            <a class="btn btn-large btn-success span2 donate" href="https://donate.aamaadmiparty.org" target="_blank">Donate to AAP</a>
+        </div>
+    </div> <!-- chart_filters -->
+  </div>
+  <div class="row offset1 hidden" id="examples">
+    Some sample views: <span class="label label-info" id="eg_july">Donations from July</span> <span class="label label-warning" id="eg_pie_world">Country-wise contributions</span> <span class="label label-success" id="eg_max_state">State with highest donations</span>
+    <br />
+  </div>
+    <div class="row offset1">
+        <div><span class="whisper">* Data last updated @ 12:45 22nd Aug 2013 IST</span></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-35624062-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</div>
+
+</div> <!-- container -->
+</body>
+</html>

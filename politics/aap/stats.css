@@ -3,6 +3,7 @@ body {
 }
 svg {
     font: 10px tahoma;
+    display:hidden;
 }
 path {
     stroke-width: 2;
@@ -39,7 +40,7 @@ path.timeline {
 }
 .chart_label {
     font-size: 14px;
-    fill: lightslategray;
+    fill: black;
     font-family: 'Droid Sans Mono', 'Courier New';
     text-transform: capitalize;
 }

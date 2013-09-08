@@ -1,0 +1,34 @@
+body {
+    background-image: none;
+}
+div#chart_filters {
+    margin-left: 0px;
+}
+div.chart_container {
+    width: 700px;
+    margin-left: 0px;
+    border-style: none;
+}
+div#examples {
+    padding-left: 0px;
+    margin-left: 8px;
+    padding-bottom: 10px;
+}
+#donate_to_aap {
+    margin-left: -20px;
+}
+a.donate {
+    margin-left: 0px;
+    padding-right: 8px;
+}
+thead {
+    font-size: 9px;
+}
+div.container {
+    width: 700px;
+}
+div.box {
+    -webkit-box-shadow: none;
+    -moz-box-shadow:    none;
+    box-shadow:         none;
+}
